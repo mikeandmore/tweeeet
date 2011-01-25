@@ -1,6 +1,6 @@
 import gtk
 import sys
-from tabs import TabManager, HomeTimeLinePage, MentionsPage
+from tabs import TabManager, HomeTimeLinePage, MentionsPage, DialogPage
 from editor import Editor
 from tweeeet.core.settings import Settings
 from tweeeet.core.utils import singleton_new
@@ -29,7 +29,8 @@ class MainWindow(object):
         self.tab_man = TabManager()
         self.tab_man.set_ui_instance(self)
         self.tab_man.register_tab(HomeTimeLinePage())
-        #self.tab_man.register_tab(MentionsPage())
+        self.tab_man.register_tab(MentionsPage())
+        self.tab_man.register_tab(DialogPage())
         
         self.editor = Editor(self.widgets['send_icon'])
 

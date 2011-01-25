@@ -40,7 +40,7 @@ class Cache(object):
 def create_api():
     settings = Settings()
     auth = tweepy.BasicAuthHandler(settings['username'], settings['password'])
-    api = tweepy.API(auth, timeout=settings['timeout'], compression=False)
+    api = tweepy.API(auth, timeout=settings['timeout'], compression=True)
     api.host = settings['host']
     api.api_root = settings['prefix']
     return api
@@ -123,8 +123,29 @@ class HomeTimeLineController(TimeLineBaseController):
 class MentionsController(TimeLineBaseController):
     __new__ = singleton_new
     
-    def fetch_timeline(self, page):
+    def fetch_timeline(self, max_id=None):
         api = API().api
         print 'mentions_timeline...'
-        return api.mentions(page=page)
+        if max_id is not None: max_id -= 1
+        return api.mentions(max_id=max_id)
+
+class DialogController(TimeLineBaseController):
+    def refresh(self):
+        pass
+
+    def next(self):
+        pass
+
+    def list_conversations(self, start_id):
+        api = API().api
+        print 'fetching dialog'
+        entry_id = start_id
+        self.items = []
+        while True:
+            entry = self.process_entry(api.get_status(entry_id))
+            self.items.append(entry)
+            yield entry
+            if entry.in_reply_to_status_id is None:
+                break
+            entry_id = entry.in_reply_to_status_id
 

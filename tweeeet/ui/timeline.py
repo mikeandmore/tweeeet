@@ -15,6 +15,7 @@ class TimeLineList(object):
         self._hint_color = gtk.gdk.Color('#a0a0a0')
         self.title_icons = []
         self.hint_icons = []
+        self.has_more_btn = True
 
         self.clear()
 
@@ -36,19 +37,23 @@ class TimeLineList(object):
         self.clear()
         if len(entry_list) == 0:
             return
-        self._table = gtk.Table(2, 3 * len(entry_list) + 1, False)
+        total_len = 3 * len(entry_list)
+        if self.has_more_btn:
+            total_len += 1
+        self._table = gtk.Table(2, total_len, False)
         self._table.set_col_spacing(0, 5)
         self._table.set_border_width(5)
         row = 0
         for entry in entry_list:
             self.attach_entry(entry, row)
             row += 1
-        # create a detail button
-        more_btn = gtk.Button("More")
-        more_btn.connect('clicked', self.on_next_clicked, None)
-        self._table.attach(more_btn, 1, 2,
-                           3 * len(entry_list), 3 * len(entry_list) + 1,
-                           0, 0)
+        if self.has_more_btn:
+            # create a detail button
+            more_btn = gtk.Button("More")
+            more_btn.connect('clicked', self.on_next_clicked, None)
+            self._table.attach(more_btn, 1, 2,
+                               total_len - 1, total_len,
+                               0, 0)
 
     def create_color_cell(self, wid, color=None):
         if color is None:
@@ -60,6 +65,7 @@ class TimeLineList(object):
 
     def compose_profile_image(self, entry):
         orig_buf = gtk.gdk.pixbuf_new_from_file(entry.image_path)
+        orig_buf.scale_simple(48, 48, gtk.gdk.INTERP_BILINEAR)
         if entry.retweeted:
             rt_buf = gtk.gdk.pixbuf_new_from_file(self.RT_TAG_IMAGE)
             rt_buf.composite(orig_buf, 0, 0, rt_buf.get_width(), rt_buf.get_height(), 0.0, 0.0, 1.0, 1.0, gtk.gdk.INTERP_NEAREST, 255)
@@ -109,13 +115,13 @@ class TimeLineList(object):
         for init_func in self.hint_icons:
             hint_box.pack_start(init_func(entry), False, False, 1)
         
-        self._table.attach(img, 0, 1, row, row + 2, 0, gtk.FILL)
+        self._table.attach(img, 0, 1, row, row + 3, gtk.FILL, gtk.FILL)
         self._table.attach(self.create_color_cell(title_box, color), 1, 2,
-                           row, row + 1, gtk.FILL, gtk.FILL)
+                           row, row + 1, gtk.FILL | gtk.EXPAND, gtk.FILL)
         self._table.attach(content, 1, 2, row + 1, row + 2,
-                           gtk.FILL, gtk.FILL)
+                           gtk.FILL | gtk.EXPAND, gtk.FILL)
         self._table.attach(self.create_color_cell(hint_box, color), 1, 2,
-                           row + 2, row + 3, gtk.FILL, gtk.FILL)
+                           row + 2, row + 3, gtk.FILL | gtk.EXPAND, gtk.FILL)
 
         self._table.set_row_spacing(row + 2, 8)
 
