@@ -106,7 +106,7 @@ class Editor(object):
             
         self.view.set_sensitive(False)
         self.update_state(0)
-        Pipeline().add_handler(pipeline_work)
+        Pipeline().add_handler(pipeline_work, 'sending message...')
     
     def on_send(self):
         start_it = self.buffer.get_iter_at_offset(0)
@@ -116,7 +116,7 @@ class Editor(object):
     def reply(self, entry):
         self.view.grab_focus()
         self.update_state(1)
-        self.buffer.set_text('@'+entry.author.screen_name+' ')
+        self.buffer.set_text('@'+entry.user.screen_name+' ')
         self.reply_entry = entry
         self.highlighter.apply_tags()
 

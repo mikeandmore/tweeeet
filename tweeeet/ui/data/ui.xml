@@ -110,6 +110,20 @@
           <object class="GtkStatusbar" id="statusbar">
             <property name="visible">True</property>
             <property name="spacing">2</property>
+            <child>
+              <object class="GtkImage" id="status_image">
+                <property name="visible">True</property>
+                <property name="xpad">2</property>
+                <property name="ypad">2</property>
+                <property name="pixel_size">16</property>
+                <property name="icon_name">dialog-warning</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>

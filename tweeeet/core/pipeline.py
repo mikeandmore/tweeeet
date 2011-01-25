@@ -9,13 +9,24 @@ class Pipeline(object):
         def __init__(self, queue):
             Thread.__init__(self)
             self.queue = queue
+            self.notification_cb = lambda status, text: sys.stdout.write('[info]: %s\n' % text)
 
         def run(self):
+            last_error = None
             while True:
-                handler = self.queue.get(block=True, timeout=None)
+                if self.queue.qsize() == 0:
+                    if last_error is None:
+                        self.notification_cb(0, 'done')
+                    else:
+                        self.notification_cb(-1, last_error)
+                        last_error = None
+                handler, text = self.queue.get(block=True, timeout=None)
                 try:
+                    if text is not None:
+                        self.notification_cb(1, text)
                     handler()
-                except:
+                except Exception, e:
+                    last_error = str(e)
                     traceback.print_exc(file=sys.stderr)
                 self.queue.task_done()
 
@@ -27,6 +38,8 @@ class Pipeline(object):
         self.worker.daemon = True
         self.worker.start()
 
-    def add_handler(self, handler):
-        self.queue.put(handler, block=True, timeout=None)
-    
+    def add_handler(self, handler, text=None):
+        self.queue.put((handler, text), block=True, timeout=None)
+
+    def set_notification_callback(self, cb):
+        self.worker.notification_cb = cb

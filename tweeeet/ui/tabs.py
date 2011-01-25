@@ -122,7 +122,7 @@ class TimeLineBasePage(object):
             gtk.threads_leave()
             
         btn.set_sensitive(False)
-        Pipeline().add_handler(pipeline_work)
+        Pipeline().add_handler(pipeline_work, 'fetching timeline...')
         Pipeline().add_handler(pipeline_ui_work)
         
     def on_refresh(self):
@@ -131,7 +131,7 @@ class TimeLineBasePage(object):
             gtk.threads_enter()
             self.list.refresh(self.controller.items)
             gtk.threads_leave()
-        Pipeline().add_handler(pipeline_work)
+        Pipeline().add_handler(pipeline_work, 'fetching timeline...')
         
     def reply_image_init(self, entry):
         def cb(widget, event, author):
@@ -145,7 +145,7 @@ class TimeLineBasePage(object):
                 gtk.threads_enter()
                 TabManager().switch_to_if_current(self)
                 gtk.threads_leave()
-            Pipeline().add_handler(pipeline_work)
+            Pipeline().add_handler(pipeline_work, 'retweeting message...')
         return self.list.create_image_button(self.RETWEET_IMAGE, entry.color, cb, entry)
 
     def dialog_image_init(self, entry):
@@ -195,6 +195,6 @@ class DialogPage(TimeLineBasePage):
             self.list.refresh(self.controller.items)
             TabManager().switch_to_if_current(self)
             gtk.threads_leave()
-        Pipeline().add_handler(pipeline_work)
+        Pipeline().add_handler(pipeline_work, 'fetching conversations...')
 
 

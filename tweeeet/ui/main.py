@@ -4,6 +4,7 @@ from tabs import TabManager, HomeTimeLinePage, MentionsPage, DialogPage
 from editor import Editor
 from tweeeet.core.settings import Settings
 from tweeeet.core.utils import singleton_new
+from tweeeet.core.pipeline import Pipeline
 from tweeeet.ui import package_path
 
 class MainWindow(object):
@@ -36,6 +37,15 @@ class MainWindow(object):
 
         self.widgets['editor_hbox'].pack_start(self.editor.view)
         self.builder.connect_signals(self, None)
+
+        Pipeline().set_notification_callback(self.show_status)
+
+    def show_status(self, status, message):
+        status_icons = ['dialog-warning', 'dialog-ok', 'image-loading']
+        status_image = self.widgets['status_image']
+        status_image.set_from_icon_name(status_icons[status + 1], gtk.ICON_SIZE_INVALID)
+        status_image.set_pixel_size(16)
+        self.widgets['statusbar'].push(0, message)
 
     def on_send_clicked(self, widget):
         self.editor.on_send()
