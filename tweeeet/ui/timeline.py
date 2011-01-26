@@ -64,12 +64,15 @@ class TimeLineList(object):
         return ebox
 
     def compose_profile_image(self, entry):
-        orig_buf = gtk.gdk.pixbuf_new_from_file(entry.image_path)
-        orig_buf = orig_buf.scale_simple(48, 48, gtk.gdk.INTERP_BILINEAR)
-        if entry.retweeted:
-            rt_buf = gtk.gdk.pixbuf_new_from_file(self.RT_TAG_IMAGE)
-            rt_buf.composite(orig_buf, 0, 0, rt_buf.get_width(), rt_buf.get_height(), 0.0, 0.0, 1.0, 1.0, gtk.gdk.INTERP_NEAREST, 255)
-        return gtk.image_new_from_pixbuf(orig_buf)
+        buf = gtk.gdk.pixbuf_new_from_file(entry.image_path)
+        if buf.get_width() != 48 or buf.get_height() != 48:
+            buf = buf.scale_simple(48, 48, gtk.gdk.INTERP_BILINEAR)
+            if entry.retweeted:
+                rt_buf = gtk.gdk.pixbuf_new_from_file(self.RT_TAG_IMAGE)
+                rt_buf.composite(buf, 0, 0, rt_buf.get_width(), rt_buf.get_height(), 0.0, 0.0, 1.0, 1.0, gtk.gdk.INTERP_NEAREST, 255)
+            return gtk.image_new_from_pixbuf(buf)
+        else:
+            return gtk.image_new_from_file(entry.image_path)
     
     def attach_entry(self, entry, row):
         row *= 3

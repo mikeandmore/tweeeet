@@ -23,7 +23,7 @@ class Cache(object):
         return md5(url).hexdigest()
 
     def get_file_path(self, url):
-        return self._path + '/' + self.hash(url) + '.jpg'
+        return self._path + '/' + self.hash(url)
     
     def fetch_image(self, url):
         res = urlopen(url)
@@ -32,7 +32,7 @@ class Cache(object):
     
     def get_image(self, url):
         for dir_ent in os.listdir(self._path):
-            if self.hash(url) + '.jpg' == dir_ent:
+            if self.hash(url) == dir_ent:
                 return self.get_file_path(url)
         self.fetch_image(url)
         return self.get_file_path(url)
