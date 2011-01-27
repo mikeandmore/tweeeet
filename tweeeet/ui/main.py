@@ -49,6 +49,7 @@ class MainWindow(object):
         status_image.set_from_icon_name(status_icons[status + 1], gtk.ICON_SIZE_INVALID)
         status_image.set_pixel_size(16)
         self.widgets['statusbar'].push(0, message)
+        self.widgets['tray_icon'].set_tooltip(message)
 
     def on_tray_popup_menu(self, icon, evt_btn, evt_time):
         menu = self.widgets['tray_menu']
