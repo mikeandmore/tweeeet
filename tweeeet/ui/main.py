@@ -72,18 +72,25 @@ class MainWindow(object):
     def on_pref_clicked(self, widget):
         self.widgets['id_entry'].set_text(self.settings['username'])
         self.widgets['password_entry'].set_text(self.settings['password'])
+        self.widgets['api_host_entry'].set_text(self.settings['host'])
+        self.widgets['api_prefix_entry'].set_text(self.settings['prefix'])
+        self.widgets['timeout_spin'].get_adjustment().set_value(self.settings['timeout'])
         dlg = self.widgets['pref_dialog']
         dlg.run()
         dlg.hide()
         # update the settings
         self.settings['username'] = self.widgets['id_entry'].get_text()
         self.settings['password'] = self.widgets['password_entry'].get_text()
+        self.settings['host'] = self.widgets['api_host_entry'].get_text()
+        self.settings['prefix'] = self.widgets['api_prefix_entry'].get_text()
+        self.settings['timeout'] = int(self.widgets['timeout_spin'].get_adjustment().get_value())
 
     def on_editor_key_press(self, widget, event):
         self.editor.update_state(0)
 
     def on_quit(self, *args, **kwargs):
-        self.settings['window-x'], self.settings['window-y'] = self.window.get_position()
+        if self.shown:
+            self.settings['window-x'], self.settings['window-y'] = self.window.get_position()
         gtk.main_quit()
 
     def on_refresh_clicked(self, widget):
