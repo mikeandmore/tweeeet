@@ -12,9 +12,9 @@ class Highlighter(object):
         self.mention_tag = buf.create_tag(None, weight=pango.WEIGHT_BOLD)
         self.link_tag = buf.create_tag(None, foreground="blue", underline=pango.UNDERLINE_SINGLE)
 
-        self.mention_pattern = re.compile('@[^ @:\']+')
+        self.mention_pattern = re.compile('@[a-zA-Z0-9]+')
         self.link_pattern = re.compile('http://[^ ]*')
-
+        
         def click_cb(widget, event):
             if event.type != gtk.gdk.BUTTON_RELEASE:
                 return False
@@ -26,16 +26,29 @@ class Highlighter(object):
                 client = gconf.Client()
                 browser = client.get_string('/desktop/gnome/applications/browser/exec')
                 os.system('%s %s&' % (browser, url))
+            mention = self.get_user_mention(it)
+            if mention is not None:
+                from tabs import TabManager, UserPage
+                idx, page = TabManager().find_tab(UserPage)
+                page.set_user(mention[1:])
+                page.show_user_tweets()
             return False
+        
         view.connect('event-after', click_cb)
 
     def get_link_address(self, it):
-        if not it.has_tag(self.link_tag):
+        return self.get_tag_text(it, self.link_tag)
+
+    def get_user_mention(self, it):
+        return self.get_tag_text(it, self.mention_tag)
+
+    def get_tag_text(self, it, tag):
+        if not it.has_tag(tag):
             return None
         start_it = it.copy()
-        start_it.backward_to_tag_toggle(self.link_tag)
+        start_it.backward_to_tag_toggle(tag)
         end_it = it.copy()
-        end_it.forward_to_tag_toggle(self.link_tag)
+        end_it.forward_to_tag_toggle(tag)
         return self.buf.get_text(start_it, end_it)
 
     def clear_tags(self):

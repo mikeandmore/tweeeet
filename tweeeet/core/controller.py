@@ -129,6 +129,21 @@ class MentionsController(TimeLineBaseController):
         if max_id is not None: max_id -= 1
         return api.mentions(max_id=max_id)
 
+class UserController(TimeLineBaseController):
+    __new__ = singleton_new
+
+    def __init__(self):
+        TimeLineBaseController.__init__(self)
+        self.screen_name = None
+
+    def fetch_timeline(self, max_id=None):
+        if self.screen_name is None:
+            return
+        api = API().api
+        print 'user_timeline...'
+        if max_id is not None: max_id -= 1
+        return api.user_timeline(self.screen_name, max_id=max_id)
+
 class DialogController(TimeLineBaseController):
     def refresh(self):
         pass

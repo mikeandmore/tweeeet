@@ -2,7 +2,7 @@ import gtk
 import sys
 import traceback
 from timeline import TimeLineList
-from tweeeet.core.controller import HomeTimeLineController, MentionsController, DialogController
+from tweeeet.core.controller import HomeTimeLineController, MentionsController, DialogController, UserController
 from tweeeet.core.pipeline import Pipeline
 from tweeeet.core.utils import singleton_new
 from tweeeet.ui import package_path
@@ -166,7 +166,30 @@ class MentionsPage(TimeLineBasePage):
     def __init__(self):
         TimeLineBasePage.__init__(self)
         self.controller = MentionsController()
-        self.icon = 'bookmark-new'
+        self.icon = 'x-office-address-book'
+
+class UserPage(TimeLineBasePage):
+    def __init__(self):
+        TimeLineBasePage.__init__(self)
+        self.controller = UserController()
+        self.icon = 'face-smile'
+
+    def set_user(self, screen_name):
+        self.controller.screen_name = screen_name
+
+    def show_user_tweets(self):
+        def pipeline_work():
+            self.controller.refresh()
+            gtk.threads_enter()
+            self.list.refresh(self.controller.items)
+            TabManager().switch_to_if_current(self)
+            gtk.threads_leave()
+        Pipeline().add_handler(pipeline_work, 'fetching user timeline...')
+        idx, page = TabManager().find_tab(UserPage)
+        TabManager().switch_to(idx)
+
+    def on_refresh(self):
+        pass
 
 class DialogPage(TimeLineBasePage):
     def __init__(self):
@@ -174,7 +197,7 @@ class DialogPage(TimeLineBasePage):
         self.list.has_more_btn = False
         self.list.title_icons = []
         self.controller = DialogController()
-        self.icon = "contact-new"
+        self.icon = "help-faq"
 
     def on_refresh(self):
         # nothing to refresh for this page
@@ -196,5 +219,4 @@ class DialogPage(TimeLineBasePage):
             TabManager().switch_to_if_current(self)
             gtk.threads_leave()
         Pipeline().add_handler(pipeline_work, 'fetching conversations...')
-
 
