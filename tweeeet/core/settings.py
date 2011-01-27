@@ -1,8 +1,7 @@
 import gconf
 import tweepy
 from utils import singleton_new
-
-
+import gtk
 
 class Settings(object):
     SETTINGS_DIR = '/apps/tweeeet'
@@ -19,6 +18,8 @@ class Settings(object):
         self.set_init_value('host', tweepy.api.host)
         self.set_init_value('prefix', tweepy.api.api_root)
         self.set_init_value('timeout', 10)
+        self.set_init_value('window-x', gtk.gdk.screen_width() - 350)
+        self.set_init_value('window-y', 10)
 
     def set_init_value(self, key, val):
         if self[key] is None:
@@ -26,14 +27,14 @@ class Settings(object):
 
     def __getitem__(self, key):
         val = self._client.get(self.SETTINGS_DIR + '/' + key)
-        
+        if val is None:
+            return None
         if val.type == gconf.VALUE_BOOL:
             return val.get_bool()
         if val.type == gconf.VALUE_INT:
             return val.get_int()
         if val.type == gconf.VALUE_STRING:
             return val.get_string()
-        
         return None
 
     def __setitem__(self, key, val):
