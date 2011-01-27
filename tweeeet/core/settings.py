@@ -2,6 +2,8 @@ import gconf
 import tweepy
 from utils import singleton_new
 
+
+
 class Settings(object):
     SETTINGS_DIR = '/apps/tweeeet'
     
@@ -11,12 +13,16 @@ class Settings(object):
         self._client = gconf.Client()
         if not self._client.dir_exists(self.SETTINGS_DIR):
             self._client.add_dir(self.SETTINGS_DIR, gconf.CLIENT_PRELOAD_ONELEVEL)
-            # add default settings
-            self['username'] = ''
-            self['password'] = ''
-            self['host'] = tweepy.api.host
-            self['prefix'] = tweepy.api.api_root
-            self['timeout'] = 10
+        # add default settings
+        self.set_init_value('username', '')
+        self.set_init_value('password', '')
+        self.set_init_value('host', tweepy.api.host)
+        self.set_init_value('prefix', tweepy.api.api_root)
+        self.set_init_value('timeout', 10)
+
+    def set_init_value(self, key, val):
+        if self[key] is None:
+            self[key] = val
 
     def __getitem__(self, key):
         val = self._client.get(self.SETTINGS_DIR + '/' + key)
