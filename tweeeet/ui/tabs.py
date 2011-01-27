@@ -3,6 +3,7 @@ import sys
 import traceback
 from timeline import TimeLineList
 from tweeeet.core.controller import HomeTimeLineController, MentionsController, DialogController, UserController
+from tweeeet.core.settings import Settings
 from tweeeet.core.pipeline import Pipeline
 from tweeeet.core.utils import singleton_new
 from tweeeet.ui import package_path
@@ -22,6 +23,7 @@ class TabManager(object):
     def register_tab(self, page):
         btn = gtk.RadioToolButton()
         btn.set_icon_name(page.icon)
+        btn.set_label(page.description)
         
         self.ui.toolbar.insert(btn, len(self.tabs))
         self.tabs.append((btn, page))
@@ -161,18 +163,21 @@ class HomeTimeLinePage(TimeLineBasePage):
         TimeLineBasePage.__init__(self)
         self.controller = HomeTimeLineController()
         self.icon = 'gtk-home'
+        self.description = 'Home'
         
 class MentionsPage(TimeLineBasePage):
     def __init__(self):
         TimeLineBasePage.__init__(self)
         self.controller = MentionsController()
         self.icon = 'x-office-address-book'
+        self.description = 'Mentions'
 
 class UserPage(TimeLineBasePage):
     def __init__(self):
         TimeLineBasePage.__init__(self)
         self.controller = UserController()
         self.icon = 'face-smile'
+        self.description = 'User Tweets'
 
     def set_user(self, screen_name):
         self.controller.screen_name = screen_name
@@ -198,6 +203,7 @@ class DialogPage(TimeLineBasePage):
         self.list.title_icons = []
         self.controller = DialogController()
         self.icon = "help-faq"
+        self.description = 'Conversations'
 
     def on_refresh(self):
         # nothing to refresh for this page
