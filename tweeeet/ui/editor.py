@@ -12,7 +12,7 @@ class Highlighter(object):
         self.mention_tag = buf.create_tag(None, weight=pango.WEIGHT_BOLD)
         self.link_tag = buf.create_tag(None, foreground="blue", underline=pango.UNDERLINE_SINGLE)
 
-        self.mention_pattern = re.compile('@[a-zA-Z0-9]+')
+        self.mention_pattern = re.compile('@[a-zA-Z0-9_]+')
         self.link_pattern = re.compile('http://[^ ]*')
         
         def click_cb(widget, event):
