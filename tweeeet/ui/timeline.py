@@ -65,7 +65,7 @@ class TimeLineList(object):
 
     def compose_profile_image(self, entry):
         buf = gtk.gdk.pixbuf_new_from_file(entry.image_path)
-        if buf.get_width() != 48 or buf.get_height() != 48:
+        if buf.get_width() != 48 or buf.get_height() != 48 or entry.retweeted:
             buf = buf.scale_simple(48, 48, gtk.gdk.INTERP_BILINEAR)
             if entry.retweeted:
                 rt_buf = gtk.gdk.pixbuf_new_from_file(self.RT_TAG_IMAGE)
